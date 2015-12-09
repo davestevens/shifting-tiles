@@ -1,3 +1,15 @@
 body {
   background-color: #eee;
 }
+
+.shifting-tiles {
+  position: relative;
+
+  .tile {
+    position: absolute;
+    transition: all 1s cubic-bezier(.87,-.41,.19,1.44);
+    background-color: #ff0000;
+    border: 1px solid black;
+    box-sizing: border-box;
+  }
+}
