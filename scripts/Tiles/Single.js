@@ -1,4 +1,5 @@
-let $ = require("jquery");
+let $ = require("jquery"),
+    imageList = require("../services/ImageList");
 
 class Single {
   constructor(options) {
@@ -19,7 +20,9 @@ class Single {
         left: this.left
       });
 
-    // TODO: append 1 Image element
+    $("<div/>", { class: "image" })
+      .css({ "background-image": `url('${imageList.get()}')` })
+      .appendTo(this.$el);
 
     return this.$el;
   }

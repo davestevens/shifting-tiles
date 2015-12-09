@@ -1,4 +1,5 @@
-let $ = require("jquery");
+let $ = require("jquery"),
+    imageList = require("../services/ImageList");
 
 class DoubleHorizontal {
   constructor(options) {
@@ -19,7 +20,20 @@ class DoubleHorizontal {
         left: this.left
       });
 
-    // TODO: append 2 Image elements
+    $("<div/>", { class: "image" })
+      .css({
+        "background-image": `url('${imageList.get()}')`,
+        height: "50%"
+      })
+      .appendTo(this.$el);
+
+    $("<div/>", { class: "image" })
+      .css({
+        "background-image": `url('${imageList.get()}')`,
+        height: "50%",
+        top: "50%"
+      })
+      .appendTo(this.$el);
 
     return this.$el;
   }

@@ -4,6 +4,7 @@
 
 let $ = require("jquery"),
     imageLoader = require("./services/ImageLoader"),
+    imageList = require("./services/ImageList"),
     TileBuilder = require("./services/TileBuilder");
 
 class ShiftingTiles {
@@ -12,7 +13,6 @@ class ShiftingTiles {
 
     this.$el = $(options.el);
     this.imageUrls = options.imageUrls || [];
-    this.images = [];
   }
 
   render() {
@@ -46,11 +46,10 @@ class ShiftingTiles {
   }
 
   _preloadImages() {
-    const self = this;
     return this.imageUrls.map(function(imageUrl) {
       return imageLoader(imageUrl)
         .then(function() {
-          self.images.push(imageUrl);
+          imageList.add(imageUrl);
         });
     });
   }
