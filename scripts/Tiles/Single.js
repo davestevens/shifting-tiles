@@ -20,8 +20,10 @@ class Single {
         left: this.left
       });
 
+    this.images = [imageList.get()];
+
     $("<div/>", { class: "image" })
-      .css({ "background-image": `url('${imageList.get()}')` })
+      .css({ "background-image": `url('${this.images[0]}')` })
       .appendTo(this.$el);
 
     return this.$el;
@@ -52,6 +54,7 @@ class Single {
     const self = this;
 
     self.$el.css(options || {});
+    this.images.forEach((url) => imageList.restore(url));
     setTimeout(() => { self.$el.remove(); }, 1000);
   }
 }

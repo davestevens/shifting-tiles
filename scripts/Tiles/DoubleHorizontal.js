@@ -20,16 +20,18 @@ class DoubleHorizontal {
         left: this.left
       });
 
+    this.images = [imageList.get(), imageList.get()];
+
     $("<div/>", { class: "image" })
       .css({
-        "background-image": `url('${imageList.get()}')`,
+        "background-image": `url('${this.images[0]}')`,
         height: "50%"
       })
       .appendTo(this.$el);
 
     $("<div/>", { class: "image" })
       .css({
-        "background-image": `url('${imageList.get()}')`,
+        "background-image": `url('${this.images[1]}')`,
         height: "50%",
         top: "50%"
       })
@@ -63,6 +65,7 @@ class DoubleHorizontal {
     const self = this;
 
     self.$el.css(options || {});
+    this.images.forEach((url) => imageList.restore(url));
     setTimeout(() => { self.$el.remove(); }, 1000);
   }
 }
