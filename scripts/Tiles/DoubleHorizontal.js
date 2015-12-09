@@ -37,6 +37,34 @@ class DoubleHorizontal {
 
     return this.$el;
   }
+
+  updateView(options) {
+    this.$el.css(options || {});
+  }
+
+  removeLeft() {
+    this._remove({ width: 0 });
+  }
+
+  removeRight() {
+    this._remove({ width: 0, left: `+=${this.width}` });
+  }
+
+  clone() {
+    return new DoubleHorizontal({
+      width: this.width,
+      height: this.height,
+      left: this.left,
+      top: this.top
+    });
+  }
+
+  _remove(options) {
+    const self = this;
+
+    self.$el.css(options || {});
+    setTimeout(() => { self.$el.remove(); }, 1000);
+  }
 }
 
 module.exports = DoubleHorizontal;
