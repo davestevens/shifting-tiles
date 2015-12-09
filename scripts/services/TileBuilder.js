@@ -1,5 +1,5 @@
-let Tile = require("./Tile"),
-    TileDoubleHorizontal = require("./TileDoubleHorizontal");
+let SingleTile = require("../Tiles/Single"),
+    DoubleHorizontalTile = require("../Tiles/DoubleHorizontal");
 
 class TileBuilder {
   constructor(options) {
@@ -9,18 +9,16 @@ class TileBuilder {
     this.height = options.height;
 
     this.patterns = [
-      { klass: Tile, columns: 2 },
-      { klass: TileDoubleHorizontal, columns: 1 }
+      { klass: SingleTile, columns: 2 },
+      { klass: DoubleHorizontalTile, columns: 1 }
     ];
     this.columnWidth = 230;
   }
 
   // TODO: return a set of Tiles based on Dimensions...
   generate() {
-    let calculatedColumnWidth = this._calculateColumnWidth();
-    console.log(calculatedColumnWidth);
-
-    let index = -1,
+    let calculatedColumnWidth = this._calculateColumnWidth(),
+        index = -1,
         width = 0,
         tiles = [],
         pattern = null;

@@ -1,6 +1,6 @@
 let $ = require("jquery");
 
-class TileDoubleHorizontal {
+class Single {
   constructor(options) {
     options = options || {};
 
@@ -19,10 +19,10 @@ class TileDoubleHorizontal {
         left: this.left
       });
 
-    // TODO: append 2 Image elements
+    // TODO: append 1 Image element
 
     return this.$el;
   }
 }
 
-module.exports = TileDoubleHorizontal;
+module.exports = Single;
