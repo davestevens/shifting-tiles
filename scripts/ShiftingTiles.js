@@ -55,55 +55,50 @@ class ShiftingTiles {
     // Choose a random Tile
     if (this.tiles.length > 0) {
       let tileIndex = Math.floor(Math.random() * this.tiles.length),
-          direction = this._chooseDirection(),
-          tile = this.tiles[tileIndex],
-          clone = null;
-      console.log(tileIndex, direction);
+          direction = this._chooseDirection();
 
-      switch(direction) {
-      case "left":
-        clone = tile.clone({ left: this.width });
-        this.$el.append(clone.render());
-        this.tiles.splice(tileIndex, 1);
-
-        this.tiles.push(clone);
-
-        // Update width to 0
-        tile.removeLeft();
-
-        // Update all to the right (+) to have move left -= Tile.width
-        this.tiles.slice(tileIndex).forEach((t) => {
-          t.updateView({ left: `-=${tile.width}` })
-        });
-        break;
-      case "right":
-        // splice tileIndex out of this.tiles
-        // Update width to 0
-        // Update all to the left (-) to have move right += Tile.width
-        // Add a new Tile (same type as just removed) with left = -width
-        // Animate in with left = 0
-        clone = tile.clone({ left: -tile.width });
-        this.$el.append(clone.render());
-        this.tiles.splice(tileIndex, 1);
-
-        this.tiles.unshift(clone);
-
-        // Update width to 0
-        tile.removeRight();
-
-        // Update all to the left (-) to have move right += Tile.width
-        this.tiles.slice(0, tileIndex + 1).forEach((t) => {
-          t.updateView({ left: `+=${tile.width}` })
-        });
-        break;
-      }
+      direction.call(this, tileIndex);
     }
 
     this.timeout = window.setTimeout(this._animate.bind(this), this.interval);
   }
 
   _chooseDirection() {
-    return Math.random() < 0.5 ? "left": "right";
+    return Math.random() < 0.5 ? this._removeLeft: this._removeRight;
+  }
+
+  _removeLeft(index) {
+    let tile = this.tiles[index],
+        clone = tile.clone({ left: this.width });
+
+    this.$el.append(clone.render());
+    this.tiles.splice(index, 1);
+
+    this.tiles.push(clone);
+
+    tile.removeLeft();
+
+    // Update all to the right (+) to have move left -= Tile.width
+    this.tiles.slice(index).forEach((t) => {
+      t.updateView({ left: `-=${tile.width}` })
+    });
+  }
+
+  _removeRight(index) {
+    let tile = this.tiles[index],
+        clone = tile.clone({ left: -tile.width });
+
+    this.$el.append(clone.render());
+    this.tiles.splice(index, 1);
+
+    this.tiles.unshift(clone);
+
+    tile.removeRight();
+
+    // Update all to the left (-) to have move right += Tile.width
+    this.tiles.slice(0, index + 1).forEach((t) => {
+      t.updateView({ left: `+=${tile.width}` })
+    });
   }
 
   _preloadImages() {
