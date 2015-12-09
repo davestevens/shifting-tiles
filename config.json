@@ -1,0 +1,11 @@
+{
+  "sass": {
+    "outputStyle": "nested",
+    "sassDir": "styles/",
+    "cssDir": "example/css/",
+    "sourcemap": true
+  },
+  "browserify": {
+    "debug": true
+  }
+}
