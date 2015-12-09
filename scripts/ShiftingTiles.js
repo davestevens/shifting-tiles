@@ -62,8 +62,7 @@ class ShiftingTiles {
 
       switch(direction) {
       case "left":
-        clone = tile.clone();
-        clone.left = this.width;
+        clone = tile.clone({ left: this.width });
         this.$el.append(clone.render());
         this.tiles.splice(tileIndex, 1);
 
@@ -83,8 +82,7 @@ class ShiftingTiles {
         // Update all to the left (-) to have move right += Tile.width
         // Add a new Tile (same type as just removed) with left = -width
         // Animate in with left = 0
-        clone = tile.clone();
-        clone.left = -clone.width;
+        clone = tile.clone({ left: -tile.width });
         this.$el.append(clone.render());
         this.tiles.splice(tileIndex, 1);
 

@@ -50,13 +50,13 @@ class DoubleHorizontal {
     this._remove({ width: 0, left: `+=${this.width}` });
   }
 
-  clone() {
-    return new DoubleHorizontal({
+  clone(options) {
+    return new DoubleHorizontal($.extend({
       width: this.width,
       height: this.height,
       left: this.left,
       top: this.top
-    });
+    }, options));
   }
 
   _remove(options) {

@@ -39,13 +39,13 @@ class Single {
     this._remove({ width: 0, left: `+=${this.width}` });
   }
 
-  clone() {
-    return new Single({
+  clone(options) {
+    return new Single($.extend({
       width: this.width,
       height: this.height,
       left: this.left,
       top: this.top
-    });
+    }, options));
   }
 
   _remove(options) {
