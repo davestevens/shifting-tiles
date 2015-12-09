@@ -33,20 +33,18 @@ class ShiftingTiles {
       height: this.height
     });
 
-    // TODO: calculate Tile dimensions (based on this.$el)
+    // Calculate Tile dimensions (based on this.$el)
     this.tiles = tileBuilder.generate();
 
-    // TODO: render a set of Tiles
+    // Render a set of Tiles
     this.$el.html(
       this.tiles.map(function(tile) {
         return tile.render();
       })
     );
 
-    // TODO: start a loop for animating tiles
+    // Start a loop for animating tiles
     this.timeout = window.setTimeout(this._animate.bind(this), this.interval);
-    // TODO: select random tile
-    // TODO: anmiate out, replace with another of same type
   }
 
   _animate() {

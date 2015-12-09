@@ -15,7 +15,6 @@ class TileBuilder {
     this.columnWidth = 230;
   }
 
-  // TODO: return a set of Tiles based on Dimensions...
   generate() {
     let calculatedColumnWidth = this._calculateColumnWidth(),
         index = -1,
