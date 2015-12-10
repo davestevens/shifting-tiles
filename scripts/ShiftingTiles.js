@@ -34,14 +34,16 @@ class ShiftingTiles {
     });
 
     // Calculate Tile dimensions (based on this.$el)
-    this.tiles = tileBuilder.generate();
+    this.rows = tileBuilder.generate();
 
     // Render a set of Tiles
-    this.$el.html(
-      this.tiles.map(function(tile) {
-        return tile.render();
-      })
-    );
+    let tileElements = [];
+    this.rows.forEach(function(row) {
+      row.forEach(function(tile) {
+        tileElements.push(tile.render());
+      });
+    });
+    this.$el.html(tileElements);
 
     // Start a loop for animating tiles
     this.timeout = window.setTimeout(this._animate.bind(this), this.interval);
@@ -51,11 +53,12 @@ class ShiftingTiles {
     window.clearTimeout(this.timeout);
 
     // Choose a random Tile
-    if (this.tiles.length > 0) {
-      let tileIndex = Math.floor(Math.random() * this.tiles.length),
+    if (this.rows.length > 0) {
+      let rowIndex = Math.floor(Math.random() * this.rows.length),
+          tileIndex = Math.floor(Math.random() * this.rows[rowIndex].length),
           direction = this._chooseDirection();
 
-      direction.call(this, tileIndex);
+      direction.call(this, this.rows[rowIndex], tileIndex);
     }
 
     this.timeout = window.setTimeout(this._animate.bind(this), this.interval);
@@ -65,36 +68,36 @@ class ShiftingTiles {
     return Math.random() < 0.5 ? this._removeLeft: this._removeRight;
   }
 
-  _removeLeft(index) {
-    let tile = this.tiles[index],
+  _removeLeft(tiles, index) {
+    let tile = tiles[index],
         clone = tile.clone({ left: this.width });
 
     this.$el.append(clone.render());
-    this.tiles.splice(index, 1);
+    tiles.splice(index, 1);
 
-    this.tiles.push(clone);
+    tiles.push(clone);
 
     tile.removeLeft();
 
     // Update all to the right (+) to have move left -= Tile.width
-    this.tiles.slice(index).forEach((t) => {
+    tiles.slice(index).forEach((t) => {
       t.updateView({ left: `-=${tile.width}` })
     });
   }
 
-  _removeRight(index) {
-    let tile = this.tiles[index],
+  _removeRight(tiles, index) {
+    let tile = tiles[index],
         clone = tile.clone({ left: -tile.width });
 
     this.$el.append(clone.render());
-    this.tiles.splice(index, 1);
+    tiles.splice(index, 1);
 
-    this.tiles.unshift(clone);
+    tiles.unshift(clone);
 
     tile.removeRight();
 
     // Update all to the left (-) to have move right += Tile.width
-    this.tiles.slice(0, index + 1).forEach((t) => {
+    tiles.slice(0, index + 1).forEach((t) => {
       t.updateView({ left: `+=${tile.width}` })
     });
   }

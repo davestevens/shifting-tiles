@@ -13,12 +13,28 @@ class TileBuilder {
       { klass: DoubleHorizontalTile, columns: 1 }
     ];
     this.columnWidth = 230;
+    this.rowHeight = 250;
   }
 
   generate() {
     let calculatedColumnWidth = this._calculateColumnWidth(),
-        index = -1,
-        width = 0,
+        calculatedRowHeight = this._calculateRowHeight(),
+        numberOfRows = Math.floor(this.height / calculatedRowHeight),
+        tiles = [],
+        index;
+
+    for (index = 0; index < numberOfRows; ++index) {
+      tiles.push(
+        this._generateRow(calculatedColumnWidth, calculatedRowHeight, index)
+      );
+    }
+
+    return tiles;
+  }
+
+  _generateRow(columnWidth, rowHeight, rowIndex) {
+    let index = -1,
+        totalWidth = 0,
         tiles = [],
         pattern = null;
 
@@ -27,24 +43,28 @@ class TileBuilder {
 
       tiles.push(
         new pattern.klass({
-          width: pattern.columns * calculatedColumnWidth,
-          height: this.height,
-          top: 0,
-          left: width
+          width: pattern.columns * columnWidth,
+          height: rowHeight,
+          top: rowIndex * rowHeight,
+          left: totalWidth
         })
       );
 
-      width += pattern.columns * calculatedColumnWidth;
-    } while(width < this.width);
+      totalWidth += pattern.columns * columnWidth;
+    } while(totalWidth < this.width);
 
     return tiles;
   }
 
   /**
-   * Ensure we fill the entire Width
+   * Ensure we fill the entire Area
    */
   _calculateColumnWidth() {
     return this.width / Math.round(this.width / this.columnWidth);
+  }
+
+  _calculateRowHeight() {
+    return this.height / Math.round(this.height / this.rowHeight);
   }
 }
 
