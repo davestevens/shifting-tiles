@@ -44,18 +44,7 @@ class TileBuilder {
    * Ensure we fill the entire Width
    */
   _calculateColumnWidth() {
-    let columnCount = 0,
-        index = -1,
-        width = 0,
-        pattern = null;
-
-    do {
-      pattern = this.patterns[index = ++index % this.patterns.length];
-      width += pattern.columns * this.columnWidth;
-      if (width < this.width) { columnCount += pattern.columns; }
-    } while (width < this.width);
-
-    return (this.width / columnCount);
+    return this.width / Math.round(this.width / this.columnWidth);
   }
 }
 
