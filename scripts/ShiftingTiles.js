@@ -22,7 +22,7 @@ class ShiftingTiles {
   render() {
     this.$el
       .addClass("shifting-tiles")
-      .html("Loading"); // TODO: Loading view
+      .html(this._loadingView());
     $.when.apply($, this._preloadImages())
       .always(this._build.bind(this));
   }
@@ -109,6 +109,11 @@ class ShiftingTiles {
           imageList.add(imageUrl);
         });
     });
+  }
+
+  _loadingView() {
+    return $("<div/>", { class: "loading" })
+      .append($("<div/>" , { class: "spinner" }));
   }
 }
 
