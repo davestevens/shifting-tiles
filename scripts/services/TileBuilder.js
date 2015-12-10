@@ -1,5 +1,4 @@
-let SingleTile = require("../Tiles/Single"),
-    DoubleHorizontalTile = require("../Tiles/DoubleHorizontal");
+let PatternBuilder = require("./PatternBuilder");
 
 class TileBuilder {
   constructor(options) {
@@ -10,14 +9,15 @@ class TileBuilder {
     this.columnWidth = options.columnWidth;
     this.rowHeight = options.rowHeight;
 
-    this.patterns = [
-      { klass: SingleTile, columns: 2 },
-      { klass: DoubleHorizontalTile, columns: 1 }
-    ];
+    this.patternBuilder = new PatternBuilder({
+      width: this.width,
+      columnWidth: this.columnWidth
+    });
   }
 
   generate() {
-    let calculatedColumnWidth = this._calculateColumnWidth(),
+    let patterns = this.patternBuilder.generate(),
+        columnWidth = this.patternBuilder.columnWidth,
         calculatedRowHeight = this._calculateRowHeight(),
         numberOfRows = Math.floor(this.height / calculatedRowHeight),
         tiles = [],
@@ -25,42 +25,47 @@ class TileBuilder {
 
     for (index = 0; index < numberOfRows; ++index) {
       tiles.push(
-        this._generateRow(calculatedColumnWidth, calculatedRowHeight, index)
+        this._generateRow(patterns, columnWidth, calculatedRowHeight, index)
       );
     }
 
     return tiles;
   }
 
-  _generateRow(columnWidth, rowHeight, rowIndex) {
-    let index = -1,
+  _generateRow(patterns, columnWidth, rowHeight, rowIndex) {
+    let tiles = [],
         totalWidth = 0,
-        tiles = [],
-        pattern = null;
+        width = 0;
 
-    do {
-      pattern = this.patterns[index = ++index % this.patterns.length];
-
+    this._shuffle(patterns).forEach((pattern) => {
+      width = pattern.columns * columnWidth;
       tiles.push(
         new pattern.klass({
-          width: pattern.columns * columnWidth,
+          width: width,
           height: rowHeight,
           top: rowIndex * rowHeight,
           left: totalWidth
         })
       );
 
-      totalWidth += pattern.columns * columnWidth;
-    } while(totalWidth < this.width);
+      totalWidth += width;
+    });
 
     return tiles;
   }
 
-  /**
-   * Ensure we fill the entire Area
-   */
-  _calculateColumnWidth() {
-    return this.width / Math.round(this.width / this.columnWidth);
+  _shuffle(array) {
+    let counter = array.length, temp, index;
+
+    while (counter > 0) {
+      index = Math.floor(Math.random() * counter--);
+
+      temp = array[counter];
+      array[counter] = array[index];
+      array[index] = temp;
+    }
+
+    return array;
   }
 
   _calculateRowHeight() {
