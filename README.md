@@ -4,7 +4,7 @@ Displays Images (similar to Shifting Tiles screensaver on Mac OS X).
 
 ## Usage
 
-```
+```javascript
 var shiftingTiles = new ShiftingTiles({
   el: ".shifting-tiles-example-1",
   imageUrls: [
