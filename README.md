@@ -2,6 +2,9 @@
 
 Displays Images (similar to Shifting Tiles screensaver on Mac OS X).
 
+Example: http://davestevens.github.io/shifting-tiles/
+(Images used from http://snippets.khromov.se/stock-photo-archive-zip-77-images/)
+
 ## Usage
 
 ```javascript
