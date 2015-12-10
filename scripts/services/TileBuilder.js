@@ -7,13 +7,13 @@ class TileBuilder {
 
     this.width = options.width;
     this.height = options.height;
+    this.columnWidth = options.columnWidth;
+    this.rowHeight = options.rowHeight;
 
     this.patterns = [
       { klass: SingleTile, columns: 2 },
       { klass: DoubleHorizontalTile, columns: 1 }
     ];
-    this.columnWidth = 230;
-    this.rowHeight = 250;
   }
 
   generate() {

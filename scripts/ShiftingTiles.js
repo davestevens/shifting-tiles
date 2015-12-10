@@ -16,6 +16,8 @@ class ShiftingTiles {
     this.height = this.$el.height(),
     this.imageUrls = options.imageUrls || [];
     this.interval = options.interval || 3000;
+    this.columnWidth = options.columnWidth || 300;
+    this.rowHeight = options.columnHeight || 300;
     this.timeout = null;
   }
 
@@ -30,7 +32,9 @@ class ShiftingTiles {
   _build() {
     let tileBuilder = new TileBuilder({
       width: this.width,
-      height: this.height
+      height: this.height,
+      columnWidth: this.columnWidth,
+      rowHeight: this.rowHeight
     });
 
     // Calculate Tile dimensions (based on this.$el)
