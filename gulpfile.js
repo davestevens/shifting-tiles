@@ -11,27 +11,27 @@ var gulp = require("gulp"),
 
 gulp.task("styles", function() {
   return gulp
-    .src("styles/**/[^_]*.scss")
+    .src("styles/[^_]*.scss")
     .pipe(
       sass(config.sass).on("error", log_error)
     )
-    .pipe(gulp.dest("example/css/"))
+    .pipe(gulp.dest(config.directory))
     .pipe(livereload());
 });
 
 gulp.task("scripts", function() {
   return gulp
-    .src("example/app.js")
+    .src("scripts/*.js")
     .pipe(
       browserify(config.browserify).on("error", log_error)
     )
-    .pipe(gulp.dest("example/js"))
+    .pipe(gulp.dest(config.directory))
     .pipe(livereload());
 });
 
 gulp.task("watch", function() {
   livereload.listen();
-  gulp.watch(["scripts/**/*.js", "example/app.js"], ["scripts"]);
+  gulp.watch(["scripts/**/*"], ["scripts"]);
   gulp.watch("styles/**/*", ["styles"]);
 });
 

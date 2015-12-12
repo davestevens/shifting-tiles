@@ -6,6 +6,8 @@
     "sourcemap": true
   },
   "browserify": {
-    "debug": true
-  }
+    "debug": true,
+    "standalone": "ShiftingTiles"
+  },
+  "directory": "example/dist"
 }
