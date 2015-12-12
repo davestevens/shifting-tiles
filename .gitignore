@@ -3,5 +3,5 @@ node_modules/
 npm-debug.log
 
 # Example directory
-example/*
-!example/.keep
+example/dist/*
+!example/dist/.keep
