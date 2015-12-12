@@ -3,7 +3,8 @@ var gulp = require("gulp"),
     sass = require("gulp-sass"),
     browserify = require("gulp-browserify"),
     livereload = require("gulp-livereload"),
-    config = require("./config.json"),
+    Config = require("./config.json"),
+    config = Config.development,
     log_error = function(error) {
       gutil.log(gutil.colors.red(error.toString()));
       return this.emit("end");
@@ -29,6 +30,9 @@ gulp.task("scripts", function() {
     .pipe(livereload());
 });
 
+gulp.task("development", function() { config = Config.development; });
+gulp.task("production", function() { config = Config.production; });
+
 gulp.task("watch", function() {
   livereload.listen();
   gulp.watch(["scripts/**/*"], ["scripts"]);
@@ -40,4 +44,6 @@ gulp.task("build", [
   "scripts"
 ]);
 
-gulp.task("default", ["build", "watch"]);
+gulp.task("build-prod", ["production", "build"]);
+gulp.task("build-dev", ["build", "watch"]);
+gulp.task("default", ["build-dev"]);

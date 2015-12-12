@@ -5,8 +5,8 @@
   "main": "scripts/ShiftingTiles.js",
   "scripts": {
     "start": "http-server example",
-    "build": "gulp build",
-    "build-dev": "gulp"
+    "build-prod": "gulp build-prod",
+    "build": "gulp build-dev"
   },
   "author": "Dave Stevens <dave@dstvns.co.uk>",
   "license": "MIT",

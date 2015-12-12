@@ -51,7 +51,19 @@ Install dependencies:
 npm install
 ```
 
-Build and watch directories:
+Build and watch directories (outputs in `example/dist` directory:
 ```
-npm run build-dev
+npm run build
+```
+
+Create a webserver serving from `example` directory:
+```
+npm start
+```
+
+## Building
+
+Generate minified CSS and JavaScript in `dist` directory:
+```
+npm run build-prod
 ```

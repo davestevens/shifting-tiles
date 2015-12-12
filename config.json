@@ -1,13 +1,25 @@
 {
-  "sass": {
-    "outputStyle": "nested",
-    "sassDir": "styles/",
-    "cssDir": "example/css/",
-    "sourcemap": true
+  "development": {
+    "sass": {
+      "outputStyle": "nested",
+      "sassDir": "styles/",
+      "sourcemap": true
+    },
+    "browserify": {
+      "debug": true,
+      "standalone": "ShiftingTiles"
+    },
+    "directory": "example/dist"
   },
-  "browserify": {
-    "debug": true,
-    "standalone": "ShiftingTiles"
-  },
-  "directory": "example/dist"
+  "production": {
+    "sass": {
+      "outputStyle": "compressed",
+      "sassDir": "styles/",
+      "sourcemap": false
+    },
+    "browserify": {
+      "debug": false
+    },
+    "directory": "dist"
+  }
 }
