@@ -2,7 +2,7 @@
   "name": "shifting-tiles",
   "version": "0.1.1",
   "description": "Shifting Tiles",
-  "main": "scripts/ShiftingTiles.js",
+  "main": "dist/shifting-tiles.js",
   "scripts": {
     "start": "http-server example",
     "build-prod": "gulp build-prod",
