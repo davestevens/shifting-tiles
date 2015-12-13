@@ -1,5 +1,5 @@
-let SingleTile = require("../Tiles/Single"),
-    DoubleHorizontalTile = require("../Tiles/DoubleHorizontal"),
+let SingleTile = require("../tiles/Single"),
+    DoubleHorizontalTile = require("../tiles/DoubleHorizontal"),
     patterns = [
       { klass: SingleTile, columns: 2 },
       { klass: DoubleHorizontalTile, columns: 1 }
