@@ -6,7 +6,8 @@
   "scripts": {
     "start": "http-server example",
     "build-prod": "gulp build-prod",
-    "build": "gulp build-dev"
+    "build": "gulp build",
+    "watch": "gulp build-dev"
   },
   "author": "Dave Stevens <dave@dstvns.co.uk>",
   "license": "MIT",

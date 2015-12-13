@@ -53,6 +53,11 @@ npm install
 
 Build and watch directories (outputs in `example/dist` directory:
 ```
+npm run watch
+```
+
+Build directories (outputs in `example/dist` directory:
+```
 npm run build
 ```
 
