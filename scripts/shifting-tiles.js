@@ -29,6 +29,20 @@ class ShiftingTiles {
       .always(this._build.bind(this));
   }
 
+  pause() {
+    window.clearTimeout(this.timeout);
+  }
+
+  resume() {
+    this.timeout = window.setTimeout(this._animate.bind(this), this.interval);
+  }
+
+
+  destroy() {
+    this.pause();
+    this.$el.remove();
+  }
+
   _build() {
     let tileBuilder = new TileBuilder({
       width: this.width,
