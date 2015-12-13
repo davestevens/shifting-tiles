@@ -7,7 +7,8 @@
     },
     "browserify": {
       "debug": true,
-      "standalone": "ShiftingTiles"
+      "standalone": "ShiftingTiles",
+      "transform": ["babelify"]
     },
     "directory": "example/dist"
   },
@@ -18,7 +19,9 @@
       "sourcemap": false
     },
     "browserify": {
-      "debug": false
+      "debug": false,
+      "standalone": "ShiftingTiles",
+      "transform": ["babelify"]
     },
     "directory": "dist"
   }

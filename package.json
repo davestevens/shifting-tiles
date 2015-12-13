@@ -2,7 +2,7 @@
   "name": "shifting-tiles",
   "version": "0.2.0",
   "description": "Shifting Tiles",
-  "main": "scripts/shifting-tiles.js",
+  "main": "dist/shifting-tiles.js",
   "scripts": {
     "start": "http-server example",
     "build-prod": "gulp build-prod",
@@ -11,23 +11,18 @@
   "author": "Dave Stevens <dave@dstvns.co.uk>",
   "license": "MIT",
   "dependencies": {
+  },
+  "devDependencies": {
     "babel-core": "^6.3.13",
     "babel-preset-es2015": "^6.3.13",
     "babelify": "^7.2.0",
     "browserify": "^12.0.1",
-    "jquery": "^2.1.4"
-  },
-  "devDependencies": {
+    "jquery": "^2.1.4",
     "gulp": "^3.9.0",
     "gulp-browserify": "^0.5.1",
     "gulp-livereload": "^3.8.1",
     "gulp-sass": "^2.1.0",
     "gulp-util": "^3.0.7",
     "http-server": "^0.8.5"
-  },
-  "browserify": {
-    "transform": [
-      "babelify"
-    ]
   }
 }
