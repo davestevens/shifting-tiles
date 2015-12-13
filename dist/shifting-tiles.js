@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+!function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.ShiftingTiles=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 /*!
  * jQuery JavaScript Library v2.1.4
  * http://jquery.com/
@@ -9210,15 +9210,15 @@ return jQuery;
 
 }));
 
-},{}],2:[function(require,module,exports){
+},{}],2:[function(_dereq_,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var $ = require("jquery"),
-    imageList = require("../services/ImageList");
+var $ = _dereq_("jquery"),
+    imageList = _dereq_("../services/ImageList");
 
 var DoubleHorizontal = (function () {
   function DoubleHorizontal(options) {
@@ -9302,15 +9302,15 @@ var DoubleHorizontal = (function () {
 
 module.exports = DoubleHorizontal;
 
-},{"../services/ImageList":5,"jquery":1}],3:[function(require,module,exports){
+},{"../services/ImageList":5,"jquery":1}],3:[function(_dereq_,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var $ = require("jquery"),
-    imageList = require("../services/ImageList");
+var $ = _dereq_("jquery"),
+    imageList = _dereq_("../services/ImageList");
 
 var Single = (function () {
   function Single(options) {
@@ -9385,7 +9385,7 @@ var Single = (function () {
 
 module.exports = Single;
 
-},{"../services/ImageList":5,"jquery":1}],4:[function(require,module,exports){
+},{"../services/ImageList":5,"jquery":1}],4:[function(_dereq_,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -9396,10 +9396,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * Render a collection of Images
  */
 
-var $ = require("jquery"),
-    imageLoader = require("./services/ImageLoader"),
-    imageList = require("./services/ImageList"),
-    TileBuilder = require("./services/TileBuilder");
+var $ = _dereq_("jquery"),
+    imageLoader = _dereq_("./services/ImageLoader"),
+    imageList = _dereq_("./services/ImageList"),
+    TileBuilder = _dereq_("./services/TileBuilder");
 
 var ShiftingTiles = (function () {
   function ShiftingTiles(options) {
@@ -9524,7 +9524,7 @@ var ShiftingTiles = (function () {
 
 module.exports = ShiftingTiles;
 
-},{"./services/ImageList":5,"./services/ImageLoader":6,"./services/TileBuilder":8,"jquery":1}],5:[function(require,module,exports){
+},{"./services/ImageList":5,"./services/ImageLoader":6,"./services/TileBuilder":8,"jquery":1}],5:[function(_dereq_,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -9537,8 +9537,6 @@ var ImageList = (function () {
 
     this.images = [];
     this.available = [];
-
-    window.images = this.images;
   }
 
   _createClass(ImageList, [{
@@ -9574,10 +9572,10 @@ var ImageList = (function () {
 
 module.exports = new ImageList();
 
-},{}],6:[function(require,module,exports){
+},{}],6:[function(_dereq_,module,exports){
 "use strict";
 
-var $ = require("jquery");
+var $ = _dereq_("jquery");
 
 module.exports = function (url) {
   var deferred = $.Deferred(),
@@ -9587,15 +9585,15 @@ module.exports = function (url) {
   return deferred;
 };
 
-},{"jquery":1}],7:[function(require,module,exports){
+},{"jquery":1}],7:[function(_dereq_,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var SingleTile = require("../Tiles/Single"),
-    DoubleHorizontalTile = require("../Tiles/DoubleHorizontal"),
+var SingleTile = _dereq_("../Tiles/Single"),
+    DoubleHorizontalTile = _dereq_("../Tiles/DoubleHorizontal"),
     patterns = [{ klass: SingleTile, columns: 2 }, { klass: DoubleHorizontalTile, columns: 1 }];
 
 var PatternBuilder = (function () {
@@ -9680,14 +9678,14 @@ var PatternBuilder = (function () {
 
 module.exports = PatternBuilder;
 
-},{"../Tiles/DoubleHorizontal":2,"../Tiles/Single":3}],8:[function(require,module,exports){
+},{"../Tiles/DoubleHorizontal":2,"../Tiles/Single":3}],8:[function(_dereq_,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var PatternBuilder = require("./PatternBuilder");
+var PatternBuilder = _dereq_("./PatternBuilder");
 
 var TileBuilder = (function () {
   function TileBuilder(options) {
@@ -9773,3 +9771,5 @@ var TileBuilder = (function () {
 module.exports = TileBuilder;
 
 },{"./PatternBuilder":7}]},{},[4])
+(4)
+});
