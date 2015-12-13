@@ -2,8 +2,6 @@ class ImageList {
   constructor() {
     this.images = [];
     this.available = [];
-
-    window.images = this.images;
   }
 
   add(url) {
