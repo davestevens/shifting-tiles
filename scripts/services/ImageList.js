@@ -28,6 +28,11 @@ class ImageList {
   restore(url) {
     this.available.push(url);
   }
+
+  clear() {
+    this.images = [];
+    this.available = [];
+  }
 }
 
 module.exports = new ImageList();

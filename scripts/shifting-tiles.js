@@ -37,10 +37,11 @@ class ShiftingTiles {
     this.timeout = window.setTimeout(this._animate.bind(this), this.interval);
   }
 
-
   destroy() {
     this.pause();
     this.$el.remove();
+    this.imageUrls = [];
+    imageList.clear();
   }
 
   _build() {
