@@ -9235,8 +9235,11 @@ var ShiftingTiles = (function () {
     this.$el = $(options.el);
     this.width = this.$el.width(), this.height = this.$el.height(), this.imageUrls = options.imageUrls || [];
     this.interval = options.interval || 3000;
+    this.columnCount = options.columnCount;
     this.columnWidth = options.columnWidth || 300;
-    this.rowHeight = options.columnHeight || 300;
+    this.rowCount = options.rowCount;
+    this.rowHeight = options.rowHeight || 300;
+    this.paused = false;
     this.timeout = null;
   }
 
@@ -9249,11 +9252,13 @@ var ShiftingTiles = (function () {
   }, {
     key: "pause",
     value: function pause() {
+      this.paused = true;
       window.clearTimeout(this.timeout);
     }
   }, {
     key: "resume",
     value: function resume() {
+      this.paused = false;
       this.timeout = window.setTimeout(this._animate.bind(this), this.interval);
     }
   }, {
@@ -9270,7 +9275,9 @@ var ShiftingTiles = (function () {
       var tileBuilder = new TileBuilder({
         width: this.width,
         height: this.height,
+        columnCount: this.columnCount,
         columnWidth: this.columnWidth,
+        rowCount: this.rowCount,
         rowHeight: this.rowHeight
       });
 
@@ -9286,8 +9293,10 @@ var ShiftingTiles = (function () {
       });
       this.$el.html(tileElements);
 
-      // Start a loop for animating tiles
-      this.timeout = window.setTimeout(this._animate.bind(this), this.interval);
+      if (!this.paused) {
+        // Start a loop for animating tiles
+        this.timeout = window.setTimeout(this._animate.bind(this), this.interval);
+      }
     }
   }, {
     key: "_animate",
@@ -9455,6 +9464,8 @@ var PatternBuilder = (function () {
       return b.columns - a.columns;
     });
     this.width = options.width;
+
+    this.columnCount = options.columnCount;
     this.columnWidth = options.columnWidth;
 
     this.patterns = [];
@@ -9503,7 +9514,8 @@ var PatternBuilder = (function () {
   }, {
     key: "_calculateColumnWidth",
     value: function _calculateColumnWidth() {
-      return this.width / Math.round(this.width / this.columnWidth);
+      var count = this.columnCount || Math.round(this.width / this.columnWidth);
+      return this.width / count;
     }
   }, {
     key: "_columnCount",
@@ -9544,12 +9556,14 @@ var TileBuilder = (function () {
 
     this.width = options.width;
     this.height = options.height;
-    this.columnWidth = options.columnWidth;
+
+    this.rowCount = options.rowCount;
     this.rowHeight = options.rowHeight;
 
     this.patternBuilder = new PatternBuilder({
       width: this.width,
-      columnWidth: this.columnWidth
+      columnCount: options.columnCount,
+      columnWidth: options.columnWidth
     });
   }
 
@@ -9610,7 +9624,8 @@ var TileBuilder = (function () {
   }, {
     key: "_calculateRowHeight",
     value: function _calculateRowHeight() {
-      return this.height / Math.round(this.height / this.rowHeight);
+      var count = this.rowCount || Math.round(this.height / this.rowHeight);
+      return this.height / count;
     }
   }]);
 
