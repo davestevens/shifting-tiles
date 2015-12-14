@@ -16,8 +16,11 @@ class ShiftingTiles {
     this.height = this.$el.height(),
     this.imageUrls = options.imageUrls || [];
     this.interval = options.interval || 3000;
+    this.columnCount = options.columnCount;
     this.columnWidth = options.columnWidth || 300;
-    this.rowHeight = options.columnHeight || 300;
+    this.rowCount = options.rowCount;
+    this.rowHeight = options.rowHeight || 300;
+    this.paused = false;
     this.timeout = null;
   }
 
@@ -50,7 +53,9 @@ class ShiftingTiles {
     let tileBuilder = new TileBuilder({
       width: this.width,
       height: this.height,
+      columnCount: this.columnCount,
       columnWidth: this.columnWidth,
+      rowCount: this.rowCount,
       rowHeight: this.rowHeight
     });
 

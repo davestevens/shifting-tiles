@@ -11,6 +11,8 @@ class PatternBuilder {
 
     this.availablePatterns = patterns.sort((a, b) => b.columns - a.columns);
     this.width = options.width;
+
+    this.columnCount = options.columnCount;
     this.columnWidth = options.columnWidth;
 
     this.patterns = [];
@@ -50,7 +52,8 @@ class PatternBuilder {
   }
 
   _calculateColumnWidth() {
-    return this.width / Math.round(this.width / this.columnWidth);
+    var count = this.columnCount || Math.round(this.width / this.columnWidth);
+    return this.width / count;
   }
 
   _columnCount() {

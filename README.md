@@ -35,12 +35,16 @@ shiftingTiles.render();
 | `el`          | Selector to render Shifting Tiles into.                           | N/A     |
 | `imageUrls`   | Array of URLs of Images to display.                               | N/A     |
 | `interval`    | Milliseconds between animations.                                  | 3000    |
+| `columnCount` | Number of Columns to render (takes precedence over columnWidth).  | N/A     |
 | `columnWidth` | Requested width of Columns (used when calculating optimal widths. | 300     |
+| `rowCount`    | Number of Rows to render (takes precedence over rowWidth).        | N/A     |
 | `rowHeight`   | Requested height of Rows (used when calculating optimal heights.  | 300     |
 
 ## TODO
 
-- [ ] Pause / Resume Animations
+- [x] Pause / Resume Animations
+- [x] Define number of rows & columns
+- [ ] Redraw (Update row/column and redraw current grid)
 
 ## Development
 

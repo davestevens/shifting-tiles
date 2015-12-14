@@ -6,12 +6,14 @@ class TileBuilder {
 
     this.width = options.width;
     this.height = options.height;
-    this.columnWidth = options.columnWidth;
+
+    this.rowCount = options.rowCount;
     this.rowHeight = options.rowHeight;
 
     this.patternBuilder = new PatternBuilder({
       width: this.width,
-      columnWidth: this.columnWidth
+      columnCount: options.columnCount,
+      columnWidth: options.columnWidth
     });
   }
 
@@ -69,7 +71,8 @@ class TileBuilder {
   }
 
   _calculateRowHeight() {
-    return this.height / Math.round(this.height / this.rowHeight);
+    var count = this.rowCount || Math.round(this.height / this.rowHeight);
+    return this.height / count;
   }
 }
 

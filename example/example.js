@@ -11,8 +11,8 @@ var shiftingTiles = new ShiftingTiles({
     "images/8.jpg"
   ],
   interval: 3000,
-  columnWidth: 300,
-  rowHeight: 300
+  columnCount: 4,
+  rowCount: 2
 });
 
 shiftingTiles.render();
