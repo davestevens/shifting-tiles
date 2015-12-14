@@ -9217,181 +9217,6 @@ var _createClass = (function () { function defineProperties(target, props) { for
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var $ = _dereq_("jquery"),
-    imageList = _dereq_("../services/ImageList");
-
-var DoubleHorizontal = (function () {
-  function DoubleHorizontal(options) {
-    _classCallCheck(this, DoubleHorizontal);
-
-    options = options || {};
-
-    this.width = options.width;
-    this.height = options.height;
-    this.left = options.left;
-    this.top = options.top;
-  }
-
-  _createClass(DoubleHorizontal, [{
-    key: "render",
-    value: function render() {
-      this.$el = $("<div/>", { class: "tile" }).css({
-        height: this.height,
-        width: this.width,
-        top: this.top,
-        left: this.left
-      });
-
-      this.images = [imageList.get(), imageList.get()];
-
-      $("<div/>", { class: "image" }).css({
-        "background-image": "url('" + this.images[0] + "')",
-        height: "50%"
-      }).appendTo(this.$el);
-
-      $("<div/>", { class: "image" }).css({
-        "background-image": "url('" + this.images[1] + "')",
-        height: "50%",
-        top: "50%"
-      }).appendTo(this.$el);
-
-      return this.$el;
-    }
-  }, {
-    key: "updateView",
-    value: function updateView(options) {
-      this.$el.css(options || {});
-    }
-  }, {
-    key: "removeLeft",
-    value: function removeLeft() {
-      this._remove({ width: 0 });
-    }
-  }, {
-    key: "removeRight",
-    value: function removeRight() {
-      this._remove({ width: 0, left: "+=" + this.width });
-    }
-  }, {
-    key: "clone",
-    value: function clone(options) {
-      return new DoubleHorizontal($.extend({
-        width: this.width,
-        height: this.height,
-        left: this.left,
-        top: this.top
-      }, options));
-    }
-  }, {
-    key: "_remove",
-    value: function _remove(options) {
-      var self = this;
-
-      self.$el.css(options || {});
-      this.images.forEach(function (url) {
-        return imageList.restore(url);
-      });
-      setTimeout(function () {
-        self.$el.remove();
-      }, 1000);
-    }
-  }]);
-
-  return DoubleHorizontal;
-})();
-
-module.exports = DoubleHorizontal;
-
-},{"../services/ImageList":5,"jquery":1}],3:[function(_dereq_,module,exports){
-"use strict";
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var $ = _dereq_("jquery"),
-    imageList = _dereq_("../services/ImageList");
-
-var Single = (function () {
-  function Single(options) {
-    _classCallCheck(this, Single);
-
-    options = options || {};
-
-    this.width = options.width;
-    this.height = options.height;
-    this.left = options.left;
-    this.top = options.top;
-  }
-
-  _createClass(Single, [{
-    key: "render",
-    value: function render() {
-      this.$el = $("<div/>", { class: "tile" }).css({
-        height: this.height,
-        width: this.width,
-        top: this.top,
-        left: this.left
-      });
-
-      this.images = [imageList.get()];
-
-      $("<div/>", { class: "image" }).css({ "background-image": "url('" + this.images[0] + "')" }).appendTo(this.$el);
-
-      return this.$el;
-    }
-  }, {
-    key: "updateView",
-    value: function updateView(options) {
-      this.$el.css(options || {});
-    }
-  }, {
-    key: "removeLeft",
-    value: function removeLeft() {
-      this._remove({ width: 0 });
-    }
-  }, {
-    key: "removeRight",
-    value: function removeRight() {
-      this._remove({ width: 0, left: "+=" + this.width });
-    }
-  }, {
-    key: "clone",
-    value: function clone(options) {
-      return new Single($.extend({
-        width: this.width,
-        height: this.height,
-        left: this.left,
-        top: this.top
-      }, options));
-    }
-  }, {
-    key: "_remove",
-    value: function _remove(options) {
-      var self = this;
-
-      self.$el.css(options || {});
-      this.images.forEach(function (url) {
-        return imageList.restore(url);
-      });
-      setTimeout(function () {
-        self.$el.remove();
-      }, 1000);
-    }
-  }]);
-
-  return Single;
-})();
-
-module.exports = Single;
-
-},{"../services/ImageList":5,"jquery":1}],4:[function(_dereq_,module,exports){
-"use strict";
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 /**
  * Render a collection of Images
  */
@@ -9420,6 +9245,24 @@ var ShiftingTiles = (function () {
     value: function render() {
       this.$el.addClass("shifting-tiles").html(this._loadingView());
       $.when.apply($, this._preloadImages()).always(this._build.bind(this));
+    }
+  }, {
+    key: "pause",
+    value: function pause() {
+      window.clearTimeout(this.timeout);
+    }
+  }, {
+    key: "resume",
+    value: function resume() {
+      this.timeout = window.setTimeout(this._animate.bind(this), this.interval);
+    }
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      this.pause();
+      this.$el.remove();
+      this.imageUrls = [];
+      imageList.clear();
     }
   }, {
     key: "_build",
@@ -9524,7 +9367,7 @@ var ShiftingTiles = (function () {
 
 module.exports = ShiftingTiles;
 
-},{"./services/ImageList":5,"./services/ImageLoader":6,"./services/TileBuilder":8,"jquery":1}],5:[function(_dereq_,module,exports){
+},{"./services/ImageList":3,"./services/ImageLoader":4,"./services/TileBuilder":6,"jquery":1}],3:[function(_dereq_,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -9565,6 +9408,12 @@ var ImageList = (function () {
     value: function restore(url) {
       this.available.push(url);
     }
+  }, {
+    key: "clear",
+    value: function clear() {
+      this.images = [];
+      this.available = [];
+    }
   }]);
 
   return ImageList;
@@ -9572,7 +9421,7 @@ var ImageList = (function () {
 
 module.exports = new ImageList();
 
-},{}],6:[function(_dereq_,module,exports){
+},{}],4:[function(_dereq_,module,exports){
 "use strict";
 
 var $ = _dereq_("jquery");
@@ -9585,15 +9434,15 @@ module.exports = function (url) {
   return deferred;
 };
 
-},{"jquery":1}],7:[function(_dereq_,module,exports){
+},{"jquery":1}],5:[function(_dereq_,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var SingleTile = _dereq_("../Tiles/Single"),
-    DoubleHorizontalTile = _dereq_("../Tiles/DoubleHorizontal"),
+var SingleTile = _dereq_("../tiles/Single"),
+    DoubleHorizontalTile = _dereq_("../tiles/DoubleHorizontal"),
     patterns = [{ klass: SingleTile, columns: 2 }, { klass: DoubleHorizontalTile, columns: 1 }];
 
 var PatternBuilder = (function () {
@@ -9678,7 +9527,7 @@ var PatternBuilder = (function () {
 
 module.exports = PatternBuilder;
 
-},{"../Tiles/DoubleHorizontal":2,"../Tiles/Single":3}],8:[function(_dereq_,module,exports){
+},{"../tiles/DoubleHorizontal":7,"../tiles/Single":8}],6:[function(_dereq_,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -9770,6 +9619,181 @@ var TileBuilder = (function () {
 
 module.exports = TileBuilder;
 
-},{"./PatternBuilder":7}]},{},[4])
-(4)
+},{"./PatternBuilder":5}],7:[function(_dereq_,module,exports){
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var $ = _dereq_("jquery"),
+    imageList = _dereq_("../services/ImageList");
+
+var DoubleHorizontal = (function () {
+  function DoubleHorizontal(options) {
+    _classCallCheck(this, DoubleHorizontal);
+
+    options = options || {};
+
+    this.width = options.width;
+    this.height = options.height;
+    this.left = options.left;
+    this.top = options.top;
+  }
+
+  _createClass(DoubleHorizontal, [{
+    key: "render",
+    value: function render() {
+      this.$el = $("<div/>", { class: "tile" }).css({
+        height: this.height,
+        width: this.width,
+        top: this.top,
+        left: this.left
+      });
+
+      this.images = [imageList.get(), imageList.get()];
+
+      $("<div/>", { class: "image" }).css({
+        "background-image": "url('" + this.images[0] + "')",
+        height: "50%"
+      }).appendTo(this.$el);
+
+      $("<div/>", { class: "image" }).css({
+        "background-image": "url('" + this.images[1] + "')",
+        height: "50%",
+        top: "50%"
+      }).appendTo(this.$el);
+
+      return this.$el;
+    }
+  }, {
+    key: "updateView",
+    value: function updateView(options) {
+      this.$el.css(options || {});
+    }
+  }, {
+    key: "removeLeft",
+    value: function removeLeft() {
+      this._remove({ width: 0 });
+    }
+  }, {
+    key: "removeRight",
+    value: function removeRight() {
+      this._remove({ width: 0, left: "+=" + this.width });
+    }
+  }, {
+    key: "clone",
+    value: function clone(options) {
+      return new DoubleHorizontal($.extend({
+        width: this.width,
+        height: this.height,
+        left: this.left,
+        top: this.top
+      }, options));
+    }
+  }, {
+    key: "_remove",
+    value: function _remove(options) {
+      var self = this;
+
+      self.$el.css(options || {});
+      this.images.forEach(function (url) {
+        return imageList.restore(url);
+      });
+      setTimeout(function () {
+        self.$el.remove();
+      }, 1000);
+    }
+  }]);
+
+  return DoubleHorizontal;
+})();
+
+module.exports = DoubleHorizontal;
+
+},{"../services/ImageList":3,"jquery":1}],8:[function(_dereq_,module,exports){
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var $ = _dereq_("jquery"),
+    imageList = _dereq_("../services/ImageList");
+
+var Single = (function () {
+  function Single(options) {
+    _classCallCheck(this, Single);
+
+    options = options || {};
+
+    this.width = options.width;
+    this.height = options.height;
+    this.left = options.left;
+    this.top = options.top;
+  }
+
+  _createClass(Single, [{
+    key: "render",
+    value: function render() {
+      this.$el = $("<div/>", { class: "tile" }).css({
+        height: this.height,
+        width: this.width,
+        top: this.top,
+        left: this.left
+      });
+
+      this.images = [imageList.get()];
+
+      $("<div/>", { class: "image" }).css({ "background-image": "url('" + this.images[0] + "')" }).appendTo(this.$el);
+
+      return this.$el;
+    }
+  }, {
+    key: "updateView",
+    value: function updateView(options) {
+      this.$el.css(options || {});
+    }
+  }, {
+    key: "removeLeft",
+    value: function removeLeft() {
+      this._remove({ width: 0 });
+    }
+  }, {
+    key: "removeRight",
+    value: function removeRight() {
+      this._remove({ width: 0, left: "+=" + this.width });
+    }
+  }, {
+    key: "clone",
+    value: function clone(options) {
+      return new Single($.extend({
+        width: this.width,
+        height: this.height,
+        left: this.left,
+        top: this.top
+      }, options));
+    }
+  }, {
+    key: "_remove",
+    value: function _remove(options) {
+      var self = this;
+
+      self.$el.css(options || {});
+      this.images.forEach(function (url) {
+        return imageList.restore(url);
+      });
+      setTimeout(function () {
+        self.$el.remove();
+      }, 1000);
+    }
+  }]);
+
+  return Single;
+})();
+
+module.exports = Single;
+
+},{"../services/ImageList":3,"jquery":1}]},{},[2])
+(2)
 });
