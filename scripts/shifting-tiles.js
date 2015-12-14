@@ -30,10 +30,12 @@ class ShiftingTiles {
   }
 
   pause() {
+    this.paused = true;
     window.clearTimeout(this.timeout);
   }
 
   resume() {
+    this.paused = false;
     this.timeout = window.setTimeout(this._animate.bind(this), this.interval);
   }
 
@@ -64,8 +66,10 @@ class ShiftingTiles {
     });
     this.$el.html(tileElements);
 
-    // Start a loop for animating tiles
-    this.timeout = window.setTimeout(this._animate.bind(this), this.interval);
+    if (!this.paused) {
+      // Start a loop for animating tiles
+      this.timeout = window.setTimeout(this._animate.bind(this), this.interval);
+    }
   }
 
   _animate() {
