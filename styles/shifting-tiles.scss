@@ -6,8 +6,7 @@
 
   .tile {
     position: absolute;
-    /* transition: all 0.5s cubic-bezier(.87,-.41,.19,1.44); */
-    transition: all 0.5s ease-out;
+    transition: all 1s;
     background-color: #ff0000;
     box-sizing: border-box;
 
