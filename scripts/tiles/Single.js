@@ -34,11 +34,11 @@ class Single {
   }
 
   removeLeft() {
-    this._remove({ width: 0 });
+    this._remove({ left: `-=${this.width}` });
   }
 
   removeRight() {
-    this._remove({ width: 0, left: `+=${this.width}` });
+    this._remove({ left: `+=${this.width}` });
   }
 
   clone(options) {
@@ -53,7 +53,7 @@ class Single {
   _remove(options) {
     const self = this;
 
-    self.$el.css(options || {});
+    self.$el.css($.extend({ "z-index": 1 }, options));
     this.images.forEach((url) => imageList.restore(url));
     setTimeout(() => { self.$el.remove(); }, 1000);
   }
