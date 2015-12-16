@@ -1,6 +1,6 @@
 {
   "name": "shifting-tiles",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "Shifting Tiles",
   "main": "dist/shifting-tiles.js",
   "scripts": {
