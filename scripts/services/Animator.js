@@ -1,9 +1,7 @@
 class Animator {
-  constructor(options) {
-    options = options || {};
-
-    this.animate = options.animate;
-    this.interval = options.interval || 3000;
+  constructor({ animate, interval = 3000 }) {
+    this.animate = animate;
+    this.interval = interval;
 
     this.timer = null;
   }
