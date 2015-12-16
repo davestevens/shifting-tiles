@@ -42,7 +42,7 @@ class Single {
   }
 
   clone(options) {
-    return new Single($.extend({
+    return new this.constructor($.extend({
       width: this.width,
       height: this.height,
       left: this.left,

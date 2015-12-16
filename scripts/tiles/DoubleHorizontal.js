@@ -53,7 +53,7 @@ class DoubleHorizontal {
   }
 
   clone(options) {
-    return new DoubleHorizontal($.extend({
+    return new this.constructor($.extend({
       width: this.width,
       height: this.height,
       left: this.left,
