@@ -7,7 +7,8 @@ let $ = require("jquery"),
     imageList = require("./services/ImageList"),
     TileBuilder = require("./services/TileBuilder"),
     Animator = require("./services/Animator"),
-    DimensionCalculator = require("./services/DimensionCalculator");
+    DimensionCalculator = require("./services/DimensionCalculator"),
+    Directions = require("./services/Directions");
 
 class ShiftingTiles {
   constructor(options) {
@@ -32,6 +33,8 @@ class ShiftingTiles {
       animate: this._animate.bind(this),
       interval: options.animationInterval
     });
+
+    this.directions = new Directions({ $el: this.$el, width: this.width });
   }
 
   render() {
@@ -111,49 +114,12 @@ class ShiftingTiles {
     // Choose a random Tile
     if (this.rows.length > 0) {
       let rowIndex = Math.floor(Math.random() * this.rows.length),
-          tileIndex = Math.floor(Math.random() * this.rows[rowIndex].length),
-          direction = this._chooseDirection();
+          tileIndex = Math.floor(Math.random() * this.rows[rowIndex].length);
 
-      direction.call(this, this.rows[rowIndex], tileIndex);
+      this.directions.random(this.rows[rowIndex], tileIndex);
     }
 
     this.animator.queue();
-  }
-
-  _chooseDirection() {
-    return Math.random() < 0.5 ? this._removeLeft: this._removeRight;
-  }
-
-  _removeLeft(tiles, index) {
-    let tile = tiles[index],
-        clone = tile.clone({ left: this.width.total });
-
-    this.$el.append(clone.render());
-    tiles.push(clone);
-
-    tile.remove();
-
-    // Update all to the right (+) to have move left -= Tile.width
-    tiles.slice(index).forEach((t) => {
-      t.updateView({ left: `-=${tile.width}` })
-    });
-    tiles.splice(index, 1);
-  }
-
-  _removeRight(tiles, index) {
-    let tile = tiles[index],
-        clone = tile.clone({ left: -tile.width });
-
-    this.$el.append(clone.render());
-    tiles.unshift(clone);
-
-    tile.remove();
-
-    // Update all to the left (-) to have move right += Tile.width
-    tiles.slice(0, index + 2).forEach((t) => {
-      t.updateView({ left: `+=${tile.width}` })
-    });
-    tiles.splice(index + 1, 1);
   }
 
   _preloadImages() {
