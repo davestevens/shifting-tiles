@@ -9224,23 +9224,47 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var $ = _dereq_("jquery"),
     imageLoader = _dereq_("./services/ImageLoader"),
     imageList = _dereq_("./services/ImageList"),
-    TileBuilder = _dereq_("./services/TileBuilder");
+    TileBuilder = _dereq_("./services/TileBuilder"),
+    Animator = _dereq_("./services/Animator"),
+    DimensionCalculator = _dereq_("./services/DimensionCalculator"),
+    Directions = _dereq_("./services/Directions");
 
 var ShiftingTiles = (function () {
   function ShiftingTiles(options) {
+    var _this = this;
+
     _classCallCheck(this, ShiftingTiles);
 
     options = options || {};
 
     this.$el = $(options.el);
-    this.width = this.$el.width(), this.height = this.$el.height(), this.imageUrls = options.imageUrls || [];
-    this.interval = options.interval || 3000;
-    this.columnCount = options.columnCount;
-    this.columnWidth = options.columnWidth || 300;
-    this.rowCount = options.rowCount;
-    this.rowHeight = options.rowHeight || 300;
+    this.imageUrls = options.imageUrls || [];
+
+    this.width = new DimensionCalculator({
+      count: options.columnCount,
+      pixels: options.columnWidth,
+      total: this.$el.width(),
+      onChange: this._build.bind(this)
+    });
+    this.height = new DimensionCalculator({
+      count: options.rowCount,
+      pixels: options.rowHeight,
+      total: this.$el.height(),
+      onChange: this._build.bind(this)
+    });
+
     this.paused = false;
-    this.timeout = null;
+    this.animator = new Animator({
+      animate: this._animate.bind(this),
+      interval: options.animationInterval
+    });
+
+    $(window).on("resize", function (_event) {
+      window.clearTimeout(_this.resizeDebounce);
+      _this.resizeDebounce = window.setTimeout(_this._resized.bind(_this), 100);
+    });
+
+    this.directions = new Directions({ $el: this.$el, width: this.width });
   }
 
   _createClass(ShiftingTiles, [{
@@ -9253,13 +9277,13 @@ var ShiftingTiles = (function () {
     key: "pause",
     value: function pause() {
       this.paused = true;
-      window.clearTimeout(this.timeout);
+      window.clearTimeout(this.animationTimer);
     }
   }, {
     key: "resume",
     value: function resume() {
       this.paused = false;
-      this.timeout = window.setTimeout(this._animate.bind(this), this.interval);
+      this.animator.queue();
     }
   }, {
     key: "destroy",
@@ -9274,11 +9298,7 @@ var ShiftingTiles = (function () {
     value: function _build() {
       var tileBuilder = new TileBuilder({
         width: this.width,
-        height: this.height,
-        columnCount: this.columnCount,
-        columnWidth: this.columnWidth,
-        rowCount: this.rowCount,
-        rowHeight: this.rowHeight
+        height: this.height
       });
 
       // Calculate Tile dimensions (based on this.$el)
@@ -9292,66 +9312,29 @@ var ShiftingTiles = (function () {
         });
       });
       this.$el.html(tileElements);
-
-      if (!this.paused) {
-        // Start a loop for animating tiles
-        this.timeout = window.setTimeout(this._animate.bind(this), this.interval);
-      }
     }
   }, {
     key: "_animate",
     value: function _animate() {
-      window.clearTimeout(this.timeout);
+      if (this.paused) {
+        return;
+      }
 
       // Choose a random Tile
       if (this.rows.length > 0) {
         var rowIndex = Math.floor(Math.random() * this.rows.length),
-            tileIndex = Math.floor(Math.random() * this.rows[rowIndex].length),
-            direction = this._chooseDirection();
+            tileIndex = Math.floor(Math.random() * this.rows[rowIndex].length);
 
-        direction.call(this, this.rows[rowIndex], tileIndex);
+        this.directions.random(this.rows[rowIndex], tileIndex);
       }
 
-      this.timeout = window.setTimeout(this._animate.bind(this), this.interval);
+      this.animator.queue();
     }
   }, {
-    key: "_chooseDirection",
-    value: function _chooseDirection() {
-      return Math.random() < 0.5 ? this._removeLeft : this._removeRight;
-    }
-  }, {
-    key: "_removeLeft",
-    value: function _removeLeft(tiles, index) {
-      var tile = tiles[index],
-          clone = tile.clone({ left: this.width });
-
-      this.$el.append(clone.render());
-      tiles.push(clone);
-
-      tile.remove();
-
-      // Update all to the right (+) to have move left -= Tile.width
-      tiles.slice(index).forEach(function (t) {
-        t.updateView({ left: "-=" + tile.width });
-      });
-      tiles.splice(index, 1);
-    }
-  }, {
-    key: "_removeRight",
-    value: function _removeRight(tiles, index) {
-      var tile = tiles[index],
-          clone = tile.clone({ left: -tile.width });
-
-      this.$el.append(clone.render());
-      tiles.unshift(clone);
-
-      tile.remove();
-
-      // Update all to the left (-) to have move right += Tile.width
-      tiles.slice(0, index + 2).forEach(function (t) {
-        t.updateView({ left: "+=" + tile.width });
-      });
-      tiles.splice(index + 1, 1);
+    key: "_resized",
+    value: function _resized() {
+      this.width.total = this.$el.width();
+      this.height.total = this.$el.height();
     }
   }, {
     key: "_preloadImages",
@@ -9367,6 +9350,46 @@ var ShiftingTiles = (function () {
     value: function _loadingView() {
       return $("<div/>", { class: "loading" }).append($("<div/>", { class: "spinner" }));
     }
+  }, {
+    key: "animationInterval",
+    get: function get() {
+      return this.animator.interval;
+    },
+    set: function set(value) {
+      this.animator.interval = value;
+    }
+  }, {
+    key: "rowCount",
+    get: function get() {
+      return this.height.count;
+    },
+    set: function set(value) {
+      this.height.count = value;
+    }
+  }, {
+    key: "rowHeight",
+    get: function get() {
+      return this.height.pixels;
+    },
+    set: function set(value) {
+      this.height.pixels = value;
+    }
+  }, {
+    key: "columnCount",
+    get: function get() {
+      return this.width.count;
+    },
+    set: function set(value) {
+      this.width.count = value;
+    }
+  }, {
+    key: "columnWidth",
+    get: function get() {
+      return this.width.pixels;
+    },
+    set: function set(value) {
+      this.width.pixels = value;
+    }
   }]);
 
   return ShiftingTiles;
@@ -9374,7 +9397,187 @@ var ShiftingTiles = (function () {
 
 module.exports = ShiftingTiles;
 
-},{"./services/ImageList":3,"./services/ImageLoader":4,"./services/TileBuilder":6,"jquery":1}],3:[function(_dereq_,module,exports){
+},{"./services/Animator":3,"./services/DimensionCalculator":4,"./services/Directions":5,"./services/ImageList":6,"./services/ImageLoader":7,"./services/TileBuilder":9,"jquery":1}],3:[function(_dereq_,module,exports){
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Animator = (function () {
+  function Animator(_ref) {
+    var animate = _ref.animate;
+    var _ref$interval = _ref.interval;
+    var interval = _ref$interval === undefined ? 3000 : _ref$interval;
+
+    _classCallCheck(this, Animator);
+
+    this.animate = animate;
+    this.interval = interval;
+
+    this.timer = null;
+  }
+
+  _createClass(Animator, [{
+    key: "queue",
+    value: function queue() {
+      window.clearTimeout(this.timer);
+      this.timer = window.setTimeout(this.animate, this.interval);
+    }
+  }, {
+    key: "interval",
+    get: function get() {
+      return this._interval;
+    },
+    set: function set(value) {
+      this._interval = Math.max(value, 1000);
+      this.queue();
+    }
+  }]);
+
+  return Animator;
+})();
+
+module.exports = Animator;
+
+},{}],4:[function(_dereq_,module,exports){
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Calculate the Row/Column dimensions
+ * Count takes precedence over pixel dimensions
+ */
+
+var DimensionCalculator = (function () {
+  function DimensionCalculator(_ref) {
+    var count = _ref.count;
+    var pixels = _ref.pixels;
+    var total = _ref.total;
+    var onChange = _ref.onChange;
+
+    _classCallCheck(this, DimensionCalculator);
+
+    this._count = count;
+    this._pixels = pixels || 300;
+    this._total = total;
+
+    this.onChange = onChange || function () {/* No-op */};
+
+    this.size = this._calculate();
+  }
+
+  _createClass(DimensionCalculator, [{
+    key: "_calculate",
+    value: function _calculate() {
+      return this.total / this.count;
+    }
+  }, {
+    key: "count",
+    get: function get() {
+      return this._count || Math.round(this.total / this.pixels);
+    },
+    set: function set(value) {
+      this._count = value;
+      this.size = this._calculate();
+      this.onChange();
+    }
+  }, {
+    key: "pixels",
+    get: function get() {
+      return this._pixels;
+    },
+    set: function set(value) {
+      this._pixels = value;
+      this._count = null;
+      this.size = this._calculate();
+      this.onChange();
+    }
+  }, {
+    key: "total",
+    get: function get() {
+      return this._total;
+    },
+    set: function set(value) {
+      this._total = value;
+      this.size = this._calculate();
+      this.onChange();
+    }
+  }]);
+
+  return DimensionCalculator;
+})();
+
+module.exports = DimensionCalculator;
+
+},{}],5:[function(_dereq_,module,exports){
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Directions = (function () {
+  function Directions(_ref) {
+    var $el = _ref.$el;
+    var width = _ref.width;
+
+    _classCallCheck(this, Directions);
+
+    this.$el = $el;
+    this.width = width;
+  }
+
+  _createClass(Directions, [{
+    key: "random",
+    value: function random(tiles, index) {
+      (Math.random() < 0.5 ? this.left : this.right).call(this, tiles, index);
+    }
+  }, {
+    key: "left",
+    value: function left(tiles, index) {
+      var tile = tiles[index],
+          clone = tile.clone({ left: this.width.total });
+
+      this.$el.append(clone.render());
+      tiles.push(clone);
+
+      tile.remove();
+
+      // Update all to the right (+) to have move left -= Tile.width
+      tiles.slice(index).forEach(function (t) {
+        t.updateView({ left: "-=" + tile.width });
+      });
+      tiles.splice(index, 1);
+    }
+  }, {
+    key: "right",
+    value: function right(tiles, index) {
+      var tile = tiles[index],
+          clone = tile.clone({ left: -tile.width });
+
+      this.$el.append(clone.render());
+      tiles.unshift(clone);
+
+      tile.remove();
+
+      // Update all to the left (-) to have move right += Tile.width
+      tiles.slice(0, index + 2).forEach(function (t) {
+        t.updateView({ left: "+=" + tile.width });
+      });
+      tiles.splice(index + 1, 1);
+    }
+  }]);
+
+  return Directions;
+})();
+
+module.exports = Directions;
+
+},{}],6:[function(_dereq_,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -9428,7 +9631,7 @@ var ImageList = (function () {
 
 module.exports = new ImageList();
 
-},{}],4:[function(_dereq_,module,exports){
+},{}],7:[function(_dereq_,module,exports){
 "use strict";
 
 var $ = _dereq_("jquery");
@@ -9441,7 +9644,7 @@ module.exports = function (url) {
   return deferred;
 };
 
-},{"jquery":1}],5:[function(_dereq_,module,exports){
+},{"jquery":1}],8:[function(_dereq_,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -9453,19 +9656,16 @@ var SingleTile = _dereq_("../tiles/Single"),
     patterns = [{ klass: SingleTile, columns: 2 }, { klass: DoubleHorizontalTile, columns: 1 }];
 
 var PatternBuilder = (function () {
-  function PatternBuilder(options) {
+  function PatternBuilder(_ref) {
+    var width = _ref.width;
+
     _classCallCheck(this, PatternBuilder);
 
-    options = options || {};
+    this.width = width;
 
     this.availablePatterns = patterns.sort(function (a, b) {
       return b.columns - a.columns;
     });
-    this.width = options.width;
-
-    this.columnCount = options.columnCount;
-    this.columnWidth = options.columnWidth;
-
     this.patterns = [];
   }
 
@@ -9474,16 +9674,10 @@ var PatternBuilder = (function () {
     value: function generate() {
       var _this = this;
 
-      var minimumColumns = this._calculateMinimumColumns(),
-          numberOfColumns = Math.floor(this.width / this._calculateColumnWidth()),
-          columns = Math.max(minimumColumns, numberOfColumns);
-
-      this.columnWidth = this.width / columns;
-
       this.availablePatterns.forEach(function (p) {
         _this.patterns.push(p);
       });
-      this._fillRemainingColumns(columns);
+      this._fillRemainingColumns(this.width.count);
 
       return this.patterns;
     }
@@ -9503,32 +9697,11 @@ var PatternBuilder = (function () {
       }
     }
   }, {
-    key: "_calculateMinimumColumns",
-    value: function _calculateMinimumColumns() {
-      return this.availablePatterns.reduce(function (memo, pattern) {
-        return memo + pattern.columns;
-      }, 0);
-    }
-  }, {
-    key: "_calculateColumnWidth",
-    value: function _calculateColumnWidth() {
-      var count = this.columnCount || Math.round(this.width / this.columnWidth);
-      return this.width / count;
-    }
-  }, {
     key: "_columnCount",
     value: function _columnCount() {
       return this.patterns.reduce(function (memo, pattern) {
         return memo + pattern.columns;
       }, 0);
-    }
-  }, {
-    key: "columnWidth",
-    get: function get() {
-      return this._columnWidth;
-    },
-    set: function set(value) {
-      this._columnWidth = value;
     }
   }]);
 
@@ -9537,7 +9710,7 @@ var PatternBuilder = (function () {
 
 module.exports = PatternBuilder;
 
-},{"../tiles/DoubleHorizontal":8,"../tiles/Single":9}],6:[function(_dereq_,module,exports){
+},{"../tiles/DoubleHorizontal":11,"../tiles/Single":12}],9:[function(_dereq_,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -9547,21 +9720,17 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var PatternBuilder = _dereq_("./PatternBuilder");
 
 var TileBuilder = (function () {
-  function TileBuilder(options) {
+  function TileBuilder(_ref) {
+    var width = _ref.width;
+    var height = _ref.height;
+
     _classCallCheck(this, TileBuilder);
 
-    options = options || {};
-
-    this.width = options.width;
-    this.height = options.height;
-
-    this.rowCount = options.rowCount;
-    this.rowHeight = options.rowHeight;
+    this.width = width;
+    this.height = height;
 
     this.patternBuilder = new PatternBuilder({
-      width: this.width,
-      columnCount: options.columnCount,
-      columnWidth: options.columnWidth
+      width: this.width
     });
   }
 
@@ -9569,31 +9738,29 @@ var TileBuilder = (function () {
     key: "generate",
     value: function generate() {
       var patterns = this.patternBuilder.generate(),
-          columnWidth = this.patternBuilder.columnWidth,
-          calculatedRowHeight = this._calculateRowHeight(),
-          numberOfRows = Math.floor(this.height / calculatedRowHeight),
           tiles = [],
           index = undefined;
 
-      for (index = 0; index < numberOfRows; ++index) {
-        tiles.push(this._generateRow(patterns, columnWidth, calculatedRowHeight, index));
+      for (index = 0; index < this.height.count; ++index) {
+        tiles.push(this._generateRow(patterns, index));
       }
 
       return tiles;
     }
   }, {
     key: "_generateRow",
-    value: function _generateRow(patterns, columnWidth, rowHeight, rowIndex) {
+    value: function _generateRow(patterns, rowIndex) {
+      var self = this;
       var tiles = [],
           totalWidth = 0,
           width = 0;
 
       this._shuffle(patterns).forEach(function (pattern) {
-        width = pattern.columns * columnWidth;
+        width = pattern.columns * self.width.size;
         tiles.push(new pattern.klass({
           width: width,
-          height: rowHeight,
-          top: rowIndex * rowHeight,
+          height: self.height.size,
+          top: rowIndex * self.height.size,
           left: totalWidth
         }));
 
@@ -9619,12 +9786,6 @@ var TileBuilder = (function () {
 
       return array;
     }
-  }, {
-    key: "_calculateRowHeight",
-    value: function _calculateRowHeight() {
-      var count = this.rowCount || Math.round(this.height / this.rowHeight);
-      return this.height / count;
-    }
   }]);
 
   return TileBuilder;
@@ -9632,7 +9793,7 @@ var TileBuilder = (function () {
 
 module.exports = TileBuilder;
 
-},{"./PatternBuilder":5}],7:[function(_dereq_,module,exports){
+},{"./PatternBuilder":8}],10:[function(_dereq_,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -9715,7 +9876,7 @@ var Base = (function () {
 
 module.exports = Base;
 
-},{"../services/ImageList":3,"jquery":1}],8:[function(_dereq_,module,exports){
+},{"../services/ImageList":6,"jquery":1}],11:[function(_dereq_,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -9761,7 +9922,7 @@ var DoubleHorizontal = (function (_Base) {
 
 module.exports = DoubleHorizontal;
 
-},{"./Base":7,"jquery":1}],9:[function(_dereq_,module,exports){
+},{"./Base":10,"jquery":1}],12:[function(_dereq_,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -9798,6 +9959,6 @@ var Single = (function (_Base) {
 
 module.exports = Single;
 
-},{"./Base":7,"jquery":1}]},{},[2])
+},{"./Base":10,"jquery":1}]},{},[2])
 (2)
 });
