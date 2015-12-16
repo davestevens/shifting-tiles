@@ -9689,12 +9689,12 @@ var DoubleHorizontal = (function () {
   }, {
     key: "removeLeft",
     value: function removeLeft() {
-      this._remove({ width: 0 });
+      this._remove({ left: "-=" + this.width });
     }
   }, {
     key: "removeRight",
     value: function removeRight() {
-      this._remove({ width: 0, left: "+=" + this.width });
+      this._remove({ left: "+=" + this.width });
     }
   }, {
     key: "clone",
@@ -9711,7 +9711,7 @@ var DoubleHorizontal = (function () {
     value: function _remove(options) {
       var self = this;
 
-      self.$el.css(options || {});
+      self.$el.css($.extend({ "z-index": 1 }, options));
       this.images.forEach(function (url) {
         return imageList.restore(url);
       });
@@ -9772,12 +9772,12 @@ var Single = (function () {
   }, {
     key: "removeLeft",
     value: function removeLeft() {
-      this._remove({ width: 0 });
+      this._remove({ left: "-=" + this.width });
     }
   }, {
     key: "removeRight",
     value: function removeRight() {
-      this._remove({ width: 0, left: "+=" + this.width });
+      this._remove({ left: "+=" + this.width });
     }
   }, {
     key: "clone",
@@ -9794,7 +9794,7 @@ var Single = (function () {
     value: function _remove(options) {
       var self = this;
 
-      self.$el.css(options || {});
+      self.$el.css($.extend({ "z-index": 1 }, options));
       this.images.forEach(function (url) {
         return imageList.restore(url);
       });
