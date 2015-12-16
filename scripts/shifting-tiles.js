@@ -34,6 +34,11 @@ class ShiftingTiles {
       interval: options.animationInterval
     });
 
+    $(window).on("resize", (_event) => {
+      window.clearTimeout(this.resizeDebounce);
+      this.resizeDebounce = window.setTimeout(this._resized.bind(this), 100);
+    });
+
     this.directions = new Directions({ $el: this.$el, width: this.width });
   }
 
@@ -120,6 +125,12 @@ class ShiftingTiles {
     }
 
     this.animator.queue();
+  }
+
+  _resized() {
+    this.width.total = this.$el.width();
+    this.height.total = this.$el.height();
+    this._build();
   }
 
   _preloadImages() {
