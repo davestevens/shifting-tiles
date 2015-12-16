@@ -44,12 +44,12 @@ class DoubleHorizontal {
     this.$el.css(options || {});
   }
 
-  removeLeft() {
-    this._remove({ left: `-=${this.width}` });
-  }
+  remove() {
+    const self = this;
 
-  removeRight() {
-    this._remove({ left: `+=${this.width}` });
+    self.$el.css({ "z-index": 1 });
+    this.images.forEach((url) => imageList.restore(url));
+    setTimeout(() => { self.$el.remove(); }, 1000);
   }
 
   clone(options) {
@@ -59,14 +59,6 @@ class DoubleHorizontal {
       left: this.left,
       top: this.top
     }, options));
-  }
-
-  _remove(options) {
-    const self = this;
-
-    self.$el.css($.extend({ "z-index": 1 }, options));
-    this.images.forEach((url) => imageList.restore(url));
-    setTimeout(() => { self.$el.remove(); }, 1000);
   }
 }
 

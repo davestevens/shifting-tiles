@@ -101,16 +101,15 @@ class ShiftingTiles {
         clone = tile.clone({ left: this.width });
 
     this.$el.append(clone.render());
-    tiles.splice(index, 1);
-
     tiles.push(clone);
 
-    tile.removeLeft();
+    tile.remove();
 
     // Update all to the right (+) to have move left -= Tile.width
     tiles.slice(index).forEach((t) => {
       t.updateView({ left: `-=${tile.width}` })
     });
+    tiles.splice(index, 1);
   }
 
   _removeRight(tiles, index) {
@@ -118,16 +117,15 @@ class ShiftingTiles {
         clone = tile.clone({ left: -tile.width });
 
     this.$el.append(clone.render());
-    tiles.splice(index, 1);
-
     tiles.unshift(clone);
 
-    tile.removeRight();
+    tile.remove();
 
     // Update all to the left (-) to have move right += Tile.width
-    tiles.slice(0, index + 1).forEach((t) => {
+    tiles.slice(0, index + 2).forEach((t) => {
       t.updateView({ left: `+=${tile.width}` })
     });
+    tiles.splice(index + 1, 1);
   }
 
   _preloadImages() {
