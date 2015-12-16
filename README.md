@@ -20,13 +20,29 @@ var shiftingTiles = new ShiftingTiles({
     "images/7.jpg",
     "images/8.jpg"
   ],
-  interval: 3000,
+  animationInterval: 3000,
   columnWidth: 300,
   rowHeight: 300
 });
 
 shiftingTiles.render();
 ```
+
+## API
+
+| Name                 | Description                                                               |
+| -------------------- | ------------------------------------------------------------------------- |
+| `render`             | Builds DOM element, preloads images and builds grid layout                |
+| `pause`              | Stops animations.                                                         |
+| `resume`             | Resumes animations.                                                       |
+| `destroy`            | Removes ShiftingTiles object.                                             |
+| `animationInterval=` | Interval between images being switched out (milliseconds), clamped at 1s. |
+| `rowCount=`          | Number of rows of images to display.                                      |
+| `rowHeight=`         | Requested rows height *.                                                  |
+| `columnCount=`       | Number of columns of images to display.                                   |
+| `columnWidth=`       | Requested column width *.                                                 |
+
+* This value is used to calculated the closet value while still filling the entire view.
 
 ## Options
 
