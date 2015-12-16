@@ -20,12 +20,14 @@ class ShiftingTiles {
     this.width = new DimensionCalculator({
       count: options.columnCount,
       pixels: options.columnWidth,
-      total: this.$el.width()
+      total: this.$el.width(),
+      onChange: this._build.bind(this)
     });
     this.height = new DimensionCalculator({
       count: options.rowCount,
       pixels: options.rowHeight,
-      total: this.$el.height()
+      total: this.$el.height(),
+      onChange: this._build.bind(this)
     });
 
     this.paused = false;
@@ -73,25 +75,21 @@ class ShiftingTiles {
   get rowCount() { return this.height.count; }
   set rowCount(value) {
     this.height.count = value;
-    this._build();
   }
 
   get rowHeight() { return this.height.pixels; }
   set rowHeight(value) {
     this.height.pixels = value;
-    this._build();
  }
 
   get columnCount() { return this.width.count; }
   set columnCount(value) {
     this.width.count = value;
-    this._build();
   }
 
   get columnWidth() { return this.width.pixels; }
   set columnWidth(value) {
     this.width.pixels = value;
-    this._build();
   }
 
   _build() {
@@ -130,7 +128,6 @@ class ShiftingTiles {
   _resized() {
     this.width.total = this.$el.width();
     this.height.total = this.$el.height();
-    this._build();
   }
 
   _preloadImages() {

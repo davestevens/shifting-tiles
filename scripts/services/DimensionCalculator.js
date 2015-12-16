@@ -4,10 +4,12 @@
  */
 
 class DimensionCalculator {
-  constructor({ count, pixels, total }) {
+  constructor({ count, pixels, total, onChange }) {
     this._count = count;
     this._pixels = pixels || 300;
     this._total = total;
+
+    this.onChange = onChange || (() => { /* No-op */ });
 
     this.size = this._calculate();
   }
@@ -18,6 +20,7 @@ class DimensionCalculator {
   set count(value) {
     this._count = value;
     this.size = this._calculate();
+    this.onChange();
   }
 
   get pixels() { return this._pixels; }
@@ -25,12 +28,14 @@ class DimensionCalculator {
     this._pixels = value;
     this._count = null;
     this.size = this._calculate();
+    this.onChange();
   }
 
   get total() { return this._total; }
   set total(value) {
     this._total = value;
     this.size = this._calculate();
+    this.onChange();
   }
 
   _calculate() {
