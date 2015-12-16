@@ -100,8 +100,8 @@ class ShiftingTiles {
 
     // Render a set of Tiles
     let tileElements = [];
-    this.rows.forEach(function(row) {
-      row.forEach(function(tile) {
+    this.rows.forEach((row) => {
+      row.forEach((tile) => {
         tileElements.push(tile.render());
       });
     });
@@ -123,9 +123,9 @@ class ShiftingTiles {
   }
 
   _preloadImages() {
-    return this.imageUrls.map(function(imageUrl) {
+    return this.imageUrls.map((imageUrl) => {
       return imageLoader(imageUrl)
-        .then(function() {
+        .then(() => {
           imageList.add(imageUrl);
         });
     });
