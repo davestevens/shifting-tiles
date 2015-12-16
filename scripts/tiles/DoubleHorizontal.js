@@ -1,26 +1,12 @@
-let $ = require("jquery"),
-    imageList = require("../services/ImageList");
+let Base = require("./Base"),
+    $ = require("jquery");
 
-class DoubleHorizontal {
-  constructor(options) {
-    options = options || {};
-
-    this.width = options.width;
-    this.height = options.height;
-    this.left = options.left;
-    this.top = options.top;
-  }
-
-  render() {
-    this.$el = $("<div/>", { class: "tile" })
-      .css({
-        height: this.height,
-        width: this.width,
-        top: this.top,
-        left: this.left
-      });
-
-    this.images = [imageList.get(), imageList.get()];
+class DoubleHorizontal extends Base {
+  renderImages() {
+    this.images = [
+      this._getImage(),
+      this._getImage()
+    ];
 
     $("<div/>", { class: "image" })
       .css({
@@ -36,29 +22,6 @@ class DoubleHorizontal {
         top: "50%"
       })
       .appendTo(this.$el);
-
-    return this.$el;
-  }
-
-  updateView(options) {
-    this.$el.css(options || {});
-  }
-
-  remove() {
-    const self = this;
-
-    self.$el.css({ "z-index": 1 });
-    this.images.forEach((url) => imageList.restore(url));
-    setTimeout(() => { self.$el.remove(); }, 1000);
-  }
-
-  clone(options) {
-    return new this.constructor($.extend({
-      width: this.width,
-      height: this.height,
-      left: this.left,
-      top: this.top
-    }, options));
   }
 }
 
