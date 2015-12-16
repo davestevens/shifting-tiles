@@ -15,13 +15,15 @@ class ShiftingTiles {
     this.width = this.$el.width(),
     this.height = this.$el.height(),
     this.imageUrls = options.imageUrls || [];
-    this.interval = options.interval || 3000;
     this.columnCount = options.columnCount;
     this.columnWidth = options.columnWidth || 300;
     this.rowCount = options.rowCount;
     this.rowHeight = options.rowHeight || 300;
+
+    this.animationInterval = options.animationInterval || 3000;
+
     this.paused = false;
-    this.timeout = null;
+    this.animationTimer = null;
   }
 
   render() {
@@ -34,12 +36,12 @@ class ShiftingTiles {
 
   pause() {
     this.paused = true;
-    window.clearTimeout(this.timeout);
+    window.clearTimeout(this.animationTimer);
   }
 
   resume() {
     this.paused = false;
-    this.timeout = window.setTimeout(this._animate.bind(this), this.interval);
+    this._queueAnimation();
   }
 
   destroy() {
@@ -47,6 +49,12 @@ class ShiftingTiles {
     this.$el.remove();
     this.imageUrls = [];
     imageList.clear();
+  }
+
+  get animationInterval() { return this._animationInterval; }
+  set animationInterval(value) {
+    this._animationInterval = Math.max(value, 1000);
+    this._queueAnimation();
   }
 
   _build() {
@@ -70,15 +78,10 @@ class ShiftingTiles {
       });
     });
     this.$el.html(tileElements);
-
-    if (!this.paused) {
-      // Start a loop for animating tiles
-      this.timeout = window.setTimeout(this._animate.bind(this), this.interval);
-    }
   }
 
   _animate() {
-    window.clearTimeout(this.timeout);
+    if (this.paused) { return; }
 
     // Choose a random Tile
     if (this.rows.length > 0) {
@@ -89,7 +92,15 @@ class ShiftingTiles {
       direction.call(this, this.rows[rowIndex], tileIndex);
     }
 
-    this.timeout = window.setTimeout(this._animate.bind(this), this.interval);
+    this._queueAnimation();
+  }
+
+  _queueAnimation() {
+    window.clearTimeout(this.animationTimer);
+    this.animationTimer = window.setTimeout(
+      this._animate.bind(this),
+      this.animationInterval
+    );
   }
 
   _chooseDirection() {
