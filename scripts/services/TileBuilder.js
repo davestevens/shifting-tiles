@@ -1,51 +1,40 @@
 let PatternBuilder = require("./PatternBuilder");
 
 class TileBuilder {
-  constructor(options) {
-    options = options || {};
-
-    this.width = options.width;
-    this.height = options.height;
-
-    this.rowCount = options.rowCount;
-    this.rowHeight = options.rowHeight;
+  constructor({ width, height }) {
+    this.width = width;
+    this.height = height;
 
     this.patternBuilder = new PatternBuilder({
-      width: this.width,
-      columnCount: options.columnCount,
-      columnWidth: options.columnWidth
+      width: this.width
     });
   }
 
   generate() {
     let patterns = this.patternBuilder.generate(),
-        columnWidth = this.patternBuilder.columnWidth,
-        calculatedRowHeight = this._calculateRowHeight(),
-        numberOfRows = Math.floor(this.height / calculatedRowHeight),
         tiles = [],
         index;
 
-    for (index = 0; index < numberOfRows; ++index) {
-      tiles.push(
-        this._generateRow(patterns, columnWidth, calculatedRowHeight, index)
-      );
+    for (index = 0; index < this.height.count; ++index) {
+      tiles.push(this._generateRow(patterns, index));
     }
 
     return tiles;
   }
 
-  _generateRow(patterns, columnWidth, rowHeight, rowIndex) {
+  _generateRow(patterns, rowIndex) {
+    const self = this;
     let tiles = [],
         totalWidth = 0,
         width = 0;
 
     this._shuffle(patterns).forEach((pattern) => {
-      width = pattern.columns * columnWidth;
+      width = pattern.columns * self.width.size;
       tiles.push(
         new pattern.klass({
           width: width,
-          height: rowHeight,
-          top: rowIndex * rowHeight,
+          height: self.height.size,
+          top: rowIndex * self.height.size,
           left: totalWidth
         })
       );
@@ -68,11 +57,6 @@ class TileBuilder {
     }
 
     return array;
-  }
-
-  _calculateRowHeight() {
-    var count = this.rowCount || Math.round(this.height / this.rowHeight);
-    return this.height / count;
   }
 }
 

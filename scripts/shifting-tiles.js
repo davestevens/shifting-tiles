@@ -6,20 +6,30 @@ let $ = require("jquery"),
     imageLoader = require("./services/ImageLoader"),
     imageList = require("./services/ImageList"),
     TileBuilder = require("./services/TileBuilder"),
-    Animator = require("./services/Animator");
+    Animator = require("./services/Animator"),
+    DimensionCalculator = require("./services/DimensionCalculator");
 
 class ShiftingTiles {
   constructor(options) {
     options = options || {};
 
     this.$el = $(options.el);
-    this.width = this.$el.width(),
-    this.height = this.$el.height(),
     this.imageUrls = options.imageUrls || [];
-    this.columnCount = options.columnCount;
-    this.columnWidth = options.columnWidth || 300;
-    this.rowCount = options.rowCount;
-    this.rowHeight = options.rowHeight || 300;
+    this._columnCount = options.columnCount;
+    this._columnWidth = options.columnWidth || 300;
+    this._rowCount = options.rowCount;
+    this._rowHeight = options.rowHeight || 300;
+
+    this.width = new DimensionCalculator({
+      count: this._columnCount,
+      pixels: this._columnWidth,
+      total: this.$el.width()
+    });
+    this.height = new DimensionCalculator({
+      count: this._rowCount,
+      pixels: this._rowHeight,
+      total: this.$el.height()
+    });
 
     this.paused = false;
     this.animator = new Animator({
@@ -59,11 +69,7 @@ class ShiftingTiles {
   _build() {
     let tileBuilder = new TileBuilder({
       width: this.width,
-      height: this.height,
-      columnCount: this.columnCount,
-      columnWidth: this.columnWidth,
-      rowCount: this.rowCount,
-      rowHeight: this.rowHeight
+      height: this.height
     });
 
     // Calculate Tile dimensions (based on this.$el)
@@ -100,7 +106,7 @@ class ShiftingTiles {
 
   _removeLeft(tiles, index) {
     let tile = tiles[index],
-        clone = tile.clone({ left: this.width });
+        clone = tile.clone({ left: this.width.total });
 
     this.$el.append(clone.render());
     tiles.push(clone);

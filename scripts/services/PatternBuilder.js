@@ -6,30 +6,16 @@ let SingleTile = require("../tiles/Single"),
     ];
 
 class PatternBuilder {
-  constructor(options) {
-    options = options || {};
+  constructor({ width }) {
+    this.width = width;
 
     this.availablePatterns = patterns.sort((a, b) => b.columns - a.columns);
-    this.width = options.width;
-
-    this.columnCount = options.columnCount;
-    this.columnWidth = options.columnWidth;
-
     this.patterns = [];
   }
 
-  get columnWidth() { return this._columnWidth; }
-  set columnWidth(value) { this._columnWidth = value; }
-
   generate() {
-    let minimumColumns = this._calculateMinimumColumns(),
-        numberOfColumns = Math.floor(this.width / this._calculateColumnWidth()),
-        columns = Math.max(minimumColumns, numberOfColumns);
-
-    this.columnWidth = this.width / columns;
-
     this.availablePatterns.forEach((p) => { this.patterns.push(p) });
-    this._fillRemainingColumns(columns);
+    this._fillRemainingColumns(this.width.count);
 
     return this.patterns;
   }
@@ -44,16 +30,6 @@ class PatternBuilder {
 
       for (index = 0; index < count; ++index) { this.patterns.push(pattern); }
     }
-  }
-
-  _calculateMinimumColumns() {
-    return this.availablePatterns
-      .reduce((memo, pattern) => memo + pattern.columns, 0);
-  }
-
-  _calculateColumnWidth() {
-    var count = this.columnCount || Math.round(this.width / this.columnWidth);
-    return this.width / count;
   }
 
   _columnCount() {
