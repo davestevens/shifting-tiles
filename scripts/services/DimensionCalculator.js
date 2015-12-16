@@ -23,6 +23,7 @@ class DimensionCalculator {
   get pixels() { return this._pixels; }
   set pixels(value) {
     this._pixels = value;
+    this._count = null;
     this.size = this._calculate();
   }
 

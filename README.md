@@ -44,7 +44,7 @@ shiftingTiles.render();
 
 - [x] Pause / Resume Animations
 - [x] Define number of rows & columns
-- [ ] Redraw (Update row/column and redraw current grid)
+- [x] Redraw (Update row/column and redraw current grid)
 - [ ] Redraw on container resize
 - [x] Update animations on change to timeout
 

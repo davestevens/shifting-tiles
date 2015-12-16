@@ -15,19 +15,15 @@ class ShiftingTiles {
 
     this.$el = $(options.el);
     this.imageUrls = options.imageUrls || [];
-    this._columnCount = options.columnCount;
-    this._columnWidth = options.columnWidth || 300;
-    this._rowCount = options.rowCount;
-    this._rowHeight = options.rowHeight || 300;
 
     this.width = new DimensionCalculator({
-      count: this._columnCount,
-      pixels: this._columnWidth,
+      count: options.columnCount,
+      pixels: options.columnWidth,
       total: this.$el.width()
     });
     this.height = new DimensionCalculator({
-      count: this._rowCount,
-      pixels: this._rowHeight,
+      count: options.rowCount,
+      pixels: options.rowHeight,
       total: this.$el.height()
     });
 
@@ -65,6 +61,30 @@ class ShiftingTiles {
 
   get animationInterval() { return this.animator.interval; }
   set animationInterval(value) { this.animator.interval = value; }
+
+  get rowCount() { return this.height.count; }
+  set rowCount(value) {
+    this.height.count = value;
+    this._build();
+  }
+
+  get rowHeight() { return this.height.pixels; }
+  set rowHeight(value) {
+    this.height.pixels = value;
+    this._build();
+ }
+
+  get columnCount() { return this.width.count; }
+  set columnCount(value) {
+    this.width.count = value;
+    this._build();
+  }
+
+  get columnWidth() { return this.width.pixels; }
+  set columnWidth(value) {
+    this.width.pixels = value;
+    this._build();
+  }
 
   _build() {
     let tileBuilder = new TileBuilder({
