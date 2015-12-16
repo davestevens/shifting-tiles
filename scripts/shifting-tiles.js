@@ -5,7 +5,8 @@
 let $ = require("jquery"),
     imageLoader = require("./services/ImageLoader"),
     imageList = require("./services/ImageList"),
-    TileBuilder = require("./services/TileBuilder");
+    TileBuilder = require("./services/TileBuilder"),
+    Animator = require("./services/Animator");
 
 class ShiftingTiles {
   constructor(options) {
@@ -20,10 +21,11 @@ class ShiftingTiles {
     this.rowCount = options.rowCount;
     this.rowHeight = options.rowHeight || 300;
 
-    this.animationInterval = options.animationInterval || 3000;
-
     this.paused = false;
-    this.animationTimer = null;
+    this.animator = new Animator({
+      animate: this._animate.bind(this),
+      interval: options.animationInterval
+    });
   }
 
   render() {
@@ -41,7 +43,7 @@ class ShiftingTiles {
 
   resume() {
     this.paused = false;
-    this._queueAnimation();
+    this.animator.queue();
   }
 
   destroy() {
@@ -51,11 +53,8 @@ class ShiftingTiles {
     imageList.clear();
   }
 
-  get animationInterval() { return this._animationInterval; }
-  set animationInterval(value) {
-    this._animationInterval = Math.max(value, 1000);
-    this._queueAnimation();
-  }
+  get animationInterval() { return this.animator.interval; }
+  set animationInterval(value) { this.animator.interval = value; }
 
   _build() {
     let tileBuilder = new TileBuilder({
@@ -92,15 +91,7 @@ class ShiftingTiles {
       direction.call(this, this.rows[rowIndex], tileIndex);
     }
 
-    this._queueAnimation();
-  }
-
-  _queueAnimation() {
-    window.clearTimeout(this.animationTimer);
-    this.animationTimer = window.setTimeout(
-      this._animate.bind(this),
-      this.animationInterval
-    );
+    this.animator.queue();
   }
 
   _chooseDirection() {
